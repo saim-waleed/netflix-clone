@@ -1,0 +1,295 @@
+{% extends 'base.html' %} {% load static %} {% block title %}Netflix Clone -
+Home{% endblock %} {% block content %}
+<!-- Hero Section -->
+<div class="hero" style="position: relative; height: 80vh; overflow: hidden">
+  <!-- Video Background -->
+  <video
+    muted
+    autoplay
+    loop
+    playsinline
+    id="hero-video"
+    style="
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    "
+  >
+    <source src="{% static 'images/Stranger.mp4' %}" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
+  <!-- Dark Overlay -->
+  <div
+    style="
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        rgba(20, 20, 20, 0.2),
+        rgba(20, 20, 20, 0.8)
+      );
+      z-index: 1;
+    "
+  ></div>
+
+  <!-- Hero Content -->
+  <div class="hero-content" style="position: relative; z-index: 2; padding: 6rem 4rem; max-width: 650px; text-align: left;">
+    <h1 class="display-3" style="font-weight: 700; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Stranger Things: Season 5</h1>
+    <p class="lead" style="font-size: 1.5rem; margin-bottom: 2rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">The epic conclusion of the groundbreaking series. One last adventure awaits in Hawkins.</p>
+    <div class="d-flex gap-3">
+      <a href="#featured" class="btn btn-light">
+        <i class="fas fa-play me-2"></i>Watch Now
+      </a>
+      <button class="btn btn-secondary">
+        <i class="fas fa-info-circle me-2"></i>More Info
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Trending Now -->
+<div class="category-row">
+  <h2 class="category-title">Trending Now</h2>
+  <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4">
+    <div class="col">
+      <div class="movie-card">
+        <img
+          src="{% static 'images/wednesday.jpg' %}"
+          alt="Wednesday"
+          class="w-100 h-100 object-fit-cover"
+          onerror="this.src='{% static 'images/featured-thumbnail.jpg' %}'"
+        />
+        <div class="movie-info">
+          <h5>Wednesday</h5>
+          <p class="small">
+            Smart, sarcastic and a little dead inside, Wednesday Addams
+            investigates a murder spree while making new friends — and foes — at
+            Nevermore Academy.
+          </p>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-light">
+              <i class="fas fa-play"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-light">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="movie-card">
+        <img
+          src="{% static 'images/witcher.webp' %}"
+          alt="The Witcher"
+          class="w-100 h-100 object-fit-cover"
+          onerror="this.src='{% static 'images/featured-thumbnail.jpg' %}'"
+        />
+        <div class="movie-info">
+          <h5>The Witcher</h5>
+          <p class="small">
+            Geralt of Rivia, a mutated monster-hunter for hire, journeys toward
+            his destiny in a turbulent world where people often prove more
+            wicked than beasts.
+          </p>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-light">
+              <i class="fas fa-play"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-light">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="movie-card">
+        <img
+          src="{% static 'images/you.jpeg' %}"
+          alt="YOU"
+          class="w-100 h-100 object-fit-cover"
+          onerror="this.src='{% static 'images/featured-thumbnail.jpg' %}'"
+        />
+        <div class="movie-info">
+          <h5>YOU</h5>
+          <p class="small">
+            A dangerously charming, intensely obsessive young man goes to
+            extreme measures to insert himself into the lives of those who
+            capture his interest.
+          </p>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-light">
+              <i class="fas fa-play"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-light">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% for i in "456"|make_list %}
+    <div class="col">
+      <div class="movie-card">
+        <div
+          style="
+            width: 100%;
+            height: 100%;
+            background-color: #e50914;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <span class="text-white">Trending {{ i }}</span>
+        </div>
+        <div class="movie-info">
+          <h5>Movie Title {{ i }}</h5>
+          <p class="small">A compelling story about adventure and discovery.</p>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-light">
+              <i class="fas fa-play"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-light">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Popular on Netflix -->
+<div class="category-row">
+  <h2 class="category-title">Popular on Netflix</h2>
+  <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4">
+    {% for i in "123456"|make_list %}
+    <div class="col">
+      <div class="movie-card">
+        <div
+          style="
+            width: 100%;
+            height: 100%;
+            background-color: #831010;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <span class="text-white">Popular {{ i }}</span>
+        </div>
+        <div class="movie-info">
+          <h5>Popular Title {{ i }}</h5>
+          <p class="small">An exciting journey into the unknown.</p>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-light">
+              <i class="fas fa-play"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-light">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Continue Watching -->
+<div class="category-row">
+  <h2 class="category-title">Continue Watching</h2>
+  <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4">
+    {% for i in "123456"|make_list %}
+    <div class="col">
+      <div class="movie-card">
+        <div
+          style="
+            width: 100%;
+            height: 100%;
+            background-color: #141414;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <span class="text-white">Movie {{ i }}</span>
+        </div>
+        <div class="movie-info">
+          <h5>Continue {{ i }}</h5>
+          <div class="progress mb-2" style="height: 2px">
+            <div
+              class="progress-bar bg-danger"
+              style="width: {% widthratio i 6 100 %}%"
+            ></div>
+          </div>
+          <button class="btn btn-sm btn-light">
+            <i class="fas fa-play me-1"></i>Resume
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- My List -->
+<div class="category-row">
+  <h2 class="category-title">My List</h2>
+  <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4">
+    {% for i in "123456"|make_list %}
+    <div class="col">
+      <div class="movie-card">
+        <div
+          style="
+            width: 100%;
+            height: 100%;
+            background-color: #2f2f2f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <span class="text-white">List {{ i }}</span>
+        </div>
+        <div class="movie-info">
+          <h5>My List {{ i }}</h5>
+          <p class="small">Added to your list.</p>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-light">
+              <i class="fas fa-play"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-light">
+              <i class="fas fa-check"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  // Add scroll effect to navbar
+  window.addEventListener("scroll", function () {
+    const navbar = document.querySelector(".navbar");
+    if (window.scrollY > 50) {
+      navbar.classList.add("scrolled");
+    } else {
+      navbar.classList.remove("scrolled");
+    }
+  });
+</script>
+{% endblock %}

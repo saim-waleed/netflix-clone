@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ user.username }}'s Profile - Netflix Clone{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Profile Header -->
+        <div class="col-12 mb-4">
+            <div class="d-flex align-items-center">
+                <img src="{{ profile.profile_picture.url|default:'/static/images/avatar.png' }}" 
+                     alt="Profile Picture"
+                     class="rounded-circle me-4"
+                     style="width: 100px; height: 100px; object-fit: cover;">
+                <div>
+                    <h1 class="mb-0">{{ user.username }}'s Profile</h1>
+                    <p class="text-muted mb-2">Member since {{ user.date_joined|date:"F Y" }}</p>
+                    <a href="{% url 'edit_profile' %}" class="btn btn-outline-danger">
+                        <i class="fas fa-edit me-2"></i>Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- My List -->
+        <div class="col-12 mb-5">
+            <h2 class="mb-4">My List</h2>
+            {% if watchlist %}
+            <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4">
+                {% for movie in watchlist %}
+                <div class="col">
+                    <div class="movie-card">
+                        <img src="{{ movie.thumbnail.url }}" alt="{{ movie.title }}">
+                        <div class="movie-info">
+                            <h5>{{ movie.title }}</h5>
+                            <p class="small">{{ movie.description|truncatewords:20 }}</p>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'watch_movie' movie.id %}" class="btn btn-sm btn-light">
+                                    <i class="fas fa-play"></i>
+                                </a>
+                                <button class="btn btn-sm btn-outline-light" onclick="toggleWatchlist({{ movie.id }})">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center text-muted">
+                <i class="fas fa-film fa-3x mb-3"></i>
+                <p>Your list is empty. Add some movies to watch later!</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Continue Watching -->
+        <div class="col-12 mb-5">
+            <h2 class="mb-4">Continue Watching</h2>
+            {% if watched_movies %}
+            <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4">
+                {% for movie in watched_movies %}
+                <div class="col">
+                    <div class="movie-card">
+                        <img src="{{ movie.thumbnail.url }}" alt="{{ movie.title }}">
+                        <div class="movie-info">
+                            <h5>{{ movie.title }}</h5>
+                            <div class="progress mb-2" style="height: 2px;">
+                                <div class="progress-bar bg-danger" style="width: 70%"></div>
+                            </div>
+                            <a href="{% url 'watch_movie' movie.id %}" class="btn btn-sm btn-light">
+                                <i class="fas fa-play me-1"></i>Resume
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center text-muted">
+                <i class="fas fa-tv fa-3x mb-3"></i>
+                <p>You haven't watched any movies yet.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Watched Episodes -->
+        <div class="col-12">
+            <h2 class="mb-4">TV Shows Progress</h2>
+            {% if watched_episodes %}
+            <div class="row">
+                {% regroup watched_episodes by tv_show as show_list %}
+                {% for show in show_list %}
+                <div class="col-md-6 mb-4">
+                    <div class="card bg-dark">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ show.grouper.title }}</h5>
+                            <p class="text-muted">Last watched: {{ show.list.0.title }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="progress w-75" style="height: 2px;">
+                                    <div class="progress-bar bg-danger" style="width: {{ show.list|length|div:show.grouper.episodes.count|multiply:100 }}%"></div>
+                                </div>
+                                <small class="text-muted">{{ show.list|length }}/{{ show.grouper.episodes.count }} episodes</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center text-muted">
+                <i class="fas fa-tv fa-3x mb-3"></i>
+                <p>You haven't watched any TV shows yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

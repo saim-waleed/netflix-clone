@@ -1,0 +1,26 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.pyo
+
+# Django-specific
+db.sqlite3
+
+# Environment files
+.env
+*.env
+
+# VS Code settings
+.vscode/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Git-related (you shouldn't push .git folder from a zip)
+.git/
+
+# Python virtual environment
+venv/
+env/

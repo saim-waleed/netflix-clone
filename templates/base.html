@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Netflix Clone{% endblock %}</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <style>
+      /* Chatbot Styles */
+      #chatbot-icon {
+        transition: transform 0.3s ease;
+        z-index: 1000;
+      }
+
+      #chatbot-icon button {
+        width: 70px;
+        height: 70px;
+      }
+
+      #chatbot-icon .fa-robot {
+        font-size: 1.8rem;
+      }
+
+      #chatbot-icon:hover {
+        transform: scale(1.1);
+      }
+
+      #chatbot-window {
+        transition: all 0.3s ease;
+        z-index: 1000;
+        background: rgba(20, 20, 20, 0.95) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+        width: 500px !important;
+        height: 600px !important;
+      }
+
+      .chat-header {
+        background: linear-gradient(to right, #e50914, #b20710);
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        border-bottom: none !important;
+      }
+
+      .chat-messages {
+        scrollbar-width: thin;
+        scrollbar-color: #e50914 #141414;
+      }
+
+      .chat-messages::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .chat-messages::-webkit-scrollbar-track {
+        background: #141414;
+      }
+
+      .chat-messages::-webkit-scrollbar-thumb {
+        background-color: #e50914;
+        border-radius: 3px;
+      }
+
+      .chat-input {
+        background: rgba(35, 33, 33, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        transition: all 0.3s ease;
+        color: white !important;
+      }
+
+      .chat-input::placeholder {
+        color: rgba(255, 255, 255, 0.7) !important;
+      }
+
+      /* For Firefox */
+      .chat-input::-moz-placeholder {
+        color: rgba(255, 255, 255, 0.7) !important;
+        opacity: 1;
+      }
+
+      /* For Internet Explorer */
+      .chat-input:-ms-input-placeholder {
+        color: rgba(255, 255, 255, 0.7) !important;
+      }
+
+      /* For Edge */
+      .chat-input::-ms-input-placeholder {
+        color: rgba(255, 255, 255, 0.7) !important;
+      }
+
+      .chat-input:focus {
+        background: rgba(18, 17, 17, 0.15) !important;
+        border-color: #e50914 !important;
+        box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.25) !important;
+      }
+
+      .chat-submit {
+        background: #e50914;
+        border: none;
+        transition: all 0.3s ease;
+      }
+
+      .chat-submit:hover {
+        background: #b20710;
+        transform: scale(1.05);
+      }
+
+      .message {
+        margin-bottom: 1rem;
+        padding: 0.75rem 1rem;
+        border-radius: 1rem;
+        max-width: 80%;
+      }
+
+      .message-user {
+        background: #e50914;
+        margin-left: auto;
+        border-bottom-right-radius: 0.25rem;
+      }
+
+      .message-bot {
+        background: rgba(255, 255, 255, 0.1);
+        margin-right: auto;
+        border-bottom-left-radius: 0.25rem;
+      }
+    </style>
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body class="bg-black text-white">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'home' %}">
+          {% load static %}
+          <img src="{% static 'images/logo.png' %}" alt="Netflix" height="40" />
+        </a>
+        {% if user.is_authenticated %}
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'home' %}">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">TV Shows</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Movies</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">My List</a>
+            </li>
+          </ul>
+          <div class="d-flex align-items-center">
+            <form class="d-flex me-3" action="{% url 'search' %}" method="GET">
+              <input
+                class="form-control me-2 bg-dark text-white"
+                type="search"
+                placeholder="Search"
+                name="q"
+              />
+            </form>
+            <div class="dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                <img
+                  src="{% static 'images/avatar.png' %}"
+                  alt="Profile"
+                  class="rounded-circle"
+                  width="32"
+                  height="32"
+                />
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end bg-dark">
+                <li>
+                  <a class="dropdown-item text-white" href="{% url 'profile' %}"
+                    >Profile</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item text-white" href="{% url 'logout' %}"
+                    >Logout</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <div class="ms-auto">
+          <a href="{% url 'login' %}" class="btn btn-outline-danger me-2"
+            >Sign In</a
+          >
+          <a href="{% url 'signup' %}" class="btn btn-danger">Sign Up</a>
+        </div>
+        {% endif %}
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container-fluid py-4">{% block content %}{% endblock %}</main>
+
+    <!-- Chatbot Icon -->
+    <div id="chatbot-icon" class="position-fixed bottom-0 end-0 mb-4 me-4">
+      <button
+        class="btn btn-danger rounded-circle p-3"
+        onclick="toggleChatbot()"
+      >
+        <i class="fas fa-robot fa-lg"></i>
+      </button>
+    </div>
+
+    <!-- Chatbot Window -->
+    <div
+      id="chatbot-window"
+      class="position-fixed bottom-0 end-0 mb-5 me-4 rounded-3"
+      style="display: none"
+    >
+      <div
+        class="chat-header d-flex justify-content-between align-items-center p-3"
+      >
+        <div class="d-flex align-items-center">
+          <i class="fas fa-robot me-2"></i>
+          <h5 class="mb-0">ChatBot</h5>
+        </div>
+        <button class="btn btn-link text-white p-0" onclick="toggleChatbot()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div
+        id="chat-messages"
+        class="chat-messages p-3"
+        style="height: 480px; overflow-y: auto"
+      >
+        <div class="message message-bot">
+          Hello! I'm your Netflix assistant. How can I help you today?
+        </div>
+      </div>
+
+      <div class="p-3 border-top border-secondary">
+        <form id="chat-form" class="d-flex gap-2">
+          <input
+            type="text"
+            id="chat-input"
+            class="chat-input form-control"
+            placeholder="Type your message..."
+            autocomplete="off"
+          />
+          <button type="submit" class="chat-submit btn btn-danger px-3">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Footer -->
+   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/main.js"></script>
+    {% block extra_js %}{% endblock %}
+    <script>
+      function toggleChatbot() {
+        const chatWindow = document.getElementById("chatbot-window");
+        const chatIcon = document.getElementById("chatbot-icon");
+
+        if (chatWindow.style.display === "none") {
+          chatWindow.style.display = "block";
+          chatIcon.style.display = "none";
+          // Focus input when opening
+          setTimeout(() => {
+            document.getElementById("chat-input").focus();
+          }, 300);
+        } else {
+          chatWindow.style.display = "none";
+          chatIcon.style.display = "block";
+        }
+      }
+
+      // Handle chat form submission
+      document
+        .getElementById("chat-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const input = document.getElementById("chat-input");
+          const message = input.value.trim();
+
+          if (message) {
+            const messagesContainer = document.getElementById("chat-messages");
+
+            // Add user message
+            const userMessage = document.createElement("div");
+            userMessage.className = "message message-user";
+            userMessage.textContent = message;
+            messagesContainer.appendChild(userMessage);
+
+            // Clear input
+            input.value = "";
+
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Simulate bot response (replace with actual bot logic)
+            setTimeout(() => {
+              const botMessage = document.createElement("div");
+              botMessage.className = "message message-bot";
+              botMessage.textContent = "I'm processing your request...";
+              messagesContainer.appendChild(botMessage);
+              messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 500);
+          }
+        });
+    </script>
+  </body>
+</html>

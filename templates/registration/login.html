@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In - Netflix Clone{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="auth-form">
+                <h2 class="text-center mb-4">Sign In</h2>
+                
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    Your username and password didn't match. Please try again.
+                </div>
+                {% endif %}
+
+                {% if next %}
+                    {% if user.is_authenticated %}
+                    <div class="alert alert-warning">
+                        Your account doesn't have access to this page. To proceed,
+                        please login with an account that has access.
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        Please login to see this page.
+                    </div>
+                    {% endif %}
+                {% endif %}
+
+                <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Username</label>
+                        <input type="text" name="username" id="id_username" class="form-control" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">Password</label>
+                        <input type="password" name="password" id="id_password" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" name="remember" id="id_remember" class="form-check-input">
+                        <label class="form-check-label" for="id_remember">Remember me</label>
+                    </div>
+
+                    <input type="hidden" name="next" value="{{ next }}">
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger btn-lg">Sign In</button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="text-muted">New to Netflix? <a href="{% url 'signup' %}" class="text-danger">Sign up now</a></p>
+                    <p><a href="{% url 'password_reset' %}" class="text-muted">Forgot Password?</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
