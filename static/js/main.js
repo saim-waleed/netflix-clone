@@ -27,10 +27,15 @@ function toggleChatbot() {
 
 function addMessage(message, isUser = false) {
   const messageDiv = document.createElement("div");
-  messageDiv.className = `chat-message ${
-    isUser ? "user-message" : "bot-message"
-  }`;
-  messageDiv.textContent = message;
+  messageDiv.className = `chat-message ${isUser ? "user-message" : "bot-message"}`;
+
+  if (isUser) {
+    messageDiv.textContent = message;
+  } else {
+    // Use DOMPurify to safely inject markdown/HTML output
+    messageDiv.innerHTML = DOMPurify.sanitize(formatChatbotMessage(message));
+  }
+
   chatMessages.appendChild(messageDiv);
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
@@ -40,12 +45,10 @@ chatForm.addEventListener("submit", async function (e) {
   const message = chatInput.value.trim();
   if (!message) return;
 
-  // Add user message
   addMessage(message, true);
   chatInput.value = "";
 
   try {
-    // Send message to backend
     const response = await fetch("/chatbot/message/", {
       method: "POST",
       headers: {
@@ -55,15 +58,26 @@ chatForm.addEventListener("submit", async function (e) {
       body: JSON.stringify({ message }),
     });
 
-    const data = await response.json();
+    const data = await response.json(); // Expecting {"response": "..."}
 
-    // Add bot response
-    addMessage(data.response);
+    if (data.response) {
+      addMessage(data.response);
+    } else {
+      addMessage("Sorry, I didn't receive a proper response.");
+    }
   } catch (error) {
     console.error("Error:", error);
     addMessage("Sorry, I encountered an error. Please try again later.");
   }
 });
+
+function formatChatbotMessage(message) {
+  // Remove triple backticks (if any escaped server-side)
+  message = message.replace(/```(?:plaintext)?\n?([\s\S]*?)```/g, "$1");
+
+  // Convert line breaks to <br> for display in HTML
+  return message.replace(/\n/g, "<br>");
+}
 
 // Movie hover effect
 document.addEventListener("DOMContentLoaded", function () {
@@ -177,3 +191,6 @@ function createMovieCard(movie) {
 function playMovie(movieId) {
   window.location.href = `/watch/${movieId}`;
 }
+
+
+
